@@ -1,14 +1,46 @@
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
+import { FlatList, StyleSheet, View } from 'react-native';
+import GoalInput from './components/GoalInput';
+import GoalItem from './components/GoalItem';
+import { CourseGoal } from './types/CourseGoal';
 
 export default function App() {
+  const [courseGoals, setCourseGoals] = useState<CourseGoal[]>([]);
+
+  function addGoalHandler(enteredGoalText: string) {
+    setCourseGoals((currentGoals) => [
+      ...currentGoals,
+      {
+        text: enteredGoalText,
+        id: Math.random().toString(),
+      },
+    ]);
+  }
+
+  function deleteGoalHandler(id: string) {
+    setCourseGoals((currentGoals) =>
+      currentGoals.filter((goal) => goal.id !== id)
+    );
+  }
+
   return (
     <View style={styles.appContainer}>
-      <View style={styles.inputContainer}>
-        <TextInput placeholder="Your course goal!" style={styles.textInput} />
-        <Button title="Add Goal" />
-      </View>
-      <View>
-        <Text>List of goals... </Text>
+      <GoalInput onAddGoal={addGoalHandler} />
+
+      <View style={styles.goalsContainer}>
+        <FlatList
+          data={courseGoals}
+          renderItem={(itemData) => (
+            <GoalItem
+              text={itemData.item.text}
+              onDeleteItem={deleteGoalHandler.bind(null, itemData.item.id)}
+            />
+          )}
+          keyExtractor={(item) => {
+            return item.id;
+          }}
+          alwaysBounceVertical={false}
+        />
       </View>
     </View>
   );
@@ -16,21 +48,11 @@ export default function App() {
 
 const styles = StyleSheet.create({
   appContainer: {
-    padding: 50,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#cccccc',
     flex: 1,
-    marginRight: 8,
-    padding: 8,
+    paddingTop: 50,
+    paddingHorizontal: 16,
   },
-  // button: {
-  //   padding: 8,
-  // },
+  goalsContainer: {
+    flex: 6,
+  },
 });
