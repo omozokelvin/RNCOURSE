@@ -7,22 +7,31 @@ type Props = {
 
 export default function GoalItem(props: Props) {
   return (
-    <Pressable onPress={props.onDeleteItem}>
-      <View style={styles.goalItem}>
+    <View style={styles.goalItem}>
+      <Pressable
+        onPress={props.onDeleteItem}
+        android_ripple={{ color: '#210644' }}
+        style={({ pressed }) => {
+          return pressed && styles.pressedItem;
+        }}
+      >
         <Text style={styles.goalText}>{props.text}</Text>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   goalItem: {
-    margin: 8,
-    padding: 8,
+    marginBottom: 8,
     borderRadius: 8,
     backgroundColor: '#5e0acc',
   },
+  pressedItem: {
+    opacity: 0.5,
+  },
   goalText: {
     color: '#ffffff',
+    padding: 8,
   },
 });
